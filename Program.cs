@@ -49,21 +49,30 @@ namespace ReadFile
 
             /* разбор строки */
             string p, res;
-            int i=2;
-            while (i < line.Length)
+            byte[] bin = new byte[line.Length / 2];
+
+            int i = 1;
+            while (i * 2 < line.Length)
             {
-                p = line.Substring(i, 2);
+                p = line.Substring(i * 2, 2);
 
                 byte byteValue;
                 bool bres;
                 bres = Byte.TryParse(p, NumberStyles.AllowHexSpecifier, null, out byteValue);
                 if (bres)
-                    Console.Write("{0}", (char)byteValue);
+                    bin[i - 1] = byteValue;
                 else
-                    Console.WriteLine("fai ");
+                    Console.WriteLine("fail to decode {0}(place {1})", p, i * 2);
 
-                i += 2;
+                i++;
             }
+
+            Console.WriteLine("байты преобразованы");
+            using (BinaryWriter bw = new BinaryWriter(File.Open("res", FileMode.Create)))
+            {
+                bw.Write(bin);
+            }
+            Console.WriteLine("байты сохранены");
 
         }
     }
